@@ -20,8 +20,17 @@ mpDraw = mp.solutions.drawing_utils
 pTime = 0
 cTime = 0
 
-while True:
+hand_info=""
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--ip", default="127.0.0.1", help="The ip of the OSC server")
+parser.add_argument("--port", type=int, default=5005, help="The port the OSC server is listening on")
+args = parser.parse_args()
+
+client = udp_client.SimpleUDPClient(args.ip, args.port)
+
+
+while True:
     success, img = cap.read()
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
@@ -36,6 +45,7 @@ while True:
                 #if id ==0:
                 cv2.circle(img, (cx,cy), 3, (255,0,255), cv2.FILLED)
 
+
             mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
 
 
@@ -46,6 +56,8 @@ while True:
     cv2.putText(img,str(int(fps)), (10,70), cv2.FONT_HERSHEY_PLAIN, 3, (255,0,255), 3)
 
     cv2.imshow("Image", img)
-    if cv2.waitKey(5) & 0xFF == 27:
-        break
+    cv2.waitKey(1)
 
+    for x in range(10):
+        client.send_message("/filter", random.random())
+        # time.sleep(1)
