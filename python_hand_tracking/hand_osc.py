@@ -37,16 +37,24 @@ while True:
     #print(results.multi_hand_landmarks)
 
     if results.multi_hand_landmarks:
-        for handLms in results.multi_hand_landmarks:
-            for id, lm in enumerate(handLms.landmark):
-                #print(id,lm)
-                h, w, c = img.shape
-                cx, cy = int(lm.x *w), int(lm.y*h)
-                #if id ==0:
-                cv2.circle(img, (cx,cy), 3, (255,0,255), cv2.FILLED)
+        # print('Handedness:', len(results.multi_handedness))
+        # for hh in results.multi_handedness:
+        #     print(hh.classification[0].label)
+        if (len(results.multi_handedness) == 1 and results.multi_handedness[0].classification[0].label == 'Right'):
+            for handLms in results.multi_hand_landmarks:
+                for id, lm in enumerate(handLms.landmark):
+                    #print(id,lm)
+                    h, w, c = img.shape
+                    cx, cy = int(lm.x *w), int(lm.y*h)
+                    #if id ==0:
+                    cv2.circle(img, (cx,cy), 3, (255,0,255), cv2.FILLED)
+                    hand_info = " ".join([hand_info,str(cx),str(cy)])
 
+                # print(hand_info)
+                client.send_message("/hand", hand_info)
 
-            mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+                hand_info = ""
+                mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
 
 
     cTime = time.time()
@@ -60,7 +68,3 @@ while True:
     # ESC interrupt
     if cv2.waitKey(5) & 0xFF == 27:
         break
-
-    for x in range(10):
-        client.send_message("/filter", random.random())
-        # time.sleep(1)

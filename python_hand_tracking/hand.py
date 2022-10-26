@@ -1,11 +1,6 @@
 import cv2
 import mediapipe as mp
 import time
-import argparse
-import random
-import time
-
-from pythonosc import udp_client
 
 
 cap = cv2.VideoCapture(0)
