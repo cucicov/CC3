@@ -5,3 +5,8 @@
 ## dependencies
 - pip install opencv-python
 - pip install mediapipe
+
+### ScikitLearn
+- pip install pandas
+- pip install seaborn
+- pip install -U scikit-learn
